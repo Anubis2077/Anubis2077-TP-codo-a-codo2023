@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block navbar %}
+
+{% include 'components/navbar.html' %}
+
+{% endblock navbar %}
+
+
+{% block content %}
+
+
+
+<div class="pagetitle" style="padding-top: 80px;">
+    <h1>My product_list</h1>
+    
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">My product_list</h5>
+            <p>Add lightweight datatables to your project with using the <a href="https://github.com/fiduswriter/Simple-DataTables" target="_blank">Simple DataTables</a> library. Just add <code>.datatable</code> class name to any table you wish to conver to a datatable</p>
+
+            <!-- Table with stripped rows -->
+            <table class="table datatable">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Foto</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Edit</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                
+                {% for product in products %}
+                {% with forloop.counter as product_number %}
+                <tr>
+                    <th scope="row">{{ product_number }}</th>
+                    {% if product.thumbnail %}
+                    <td><div style="width: 100px; height: 50px; overflow:hidden;">
+                        <a href="#">
+                            <img class="img-fluid w-15 "src="{{ product.thumbnail.url }}" alt="">
+                        </a>
+                    </div></td>
+                    {% endif %}
+                              
+                    <td>{{ product.name }}</td>
+                    <td>${{ product.price }}</td>
+                    <td>
+                        {% if product.active %}
+                        <p style="color:green;">Published</p>
+                        {% else %}
+                        <p style="color:grey;">Draft</p>
+                        {% endif %}
+                    </td>
+            
+                    <td><a href="#">Edit</a></td>
+                </tr>
+                {% endwith %}
+            {% endfor %}
+                
+              </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}
+
+
+{% block footer %}
+{% include 'components/footer.html' %}
+{% endblock footer %}
+
+
+

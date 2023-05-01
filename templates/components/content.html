@@ -1,0 +1,46 @@
+
+
+<section style="background-color: #eee; padding-top:100px">
+  <div class="container py-5">
+    <div class="row justify-content-between flex-wrap">
+      {% for product in products %}
+      <div class="col-md-4 mb-4">
+        <div class="card" style="border-radius: 15px;">
+          <div class="bg-image hover-overlay ripple ripple-surface ripple-surface-light"
+            data-mdb-ripple-color="light">
+            <img src="{{product.thumbnail.url}}"
+              style="border-top-left-radius: 15px; border-top-right-radius: 15px; overflow:hidden;" class="img-fluid"
+              alt="Laptop" />
+            <a href="#!">
+              <div class="mask"></div>
+            </a>
+          </div>
+          <div class="card-body pb-0">
+            <div class="d-flex justify-content-between">
+              <div>
+                <p class="font-weight-700 display-6">{{product.name}}</p>
+                <p><a href="#" class="small text-muted">categoria</a> </p>
+              </div>
+            </div>
+          </div>
+          <hr class="my-0" />
+          <div class="card-body pb-0">
+              <p class="text-dark text-end">${{product.price}}</p>
+           
+            <p class="small text-muted">{{product.description|truncatechars:50}}</p>
+          </div>
+          <hr class="my-0" />
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center pb-2 mb-1">
+              <button type="button" class="btn btn-warning">add to cart</button>
+              <button type="button" class="btn btn-warning">Buy now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      
+      
+    </div>
+  </div>
+</section>
