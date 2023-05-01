@@ -63,7 +63,7 @@
                         {% endif %}
                     </td>
             
-                    <td><a href="#">Edit</a></td>
+                    <td><a href="{% url 'product_edit' slug=product.slug %}">Edit</a></td>
                 </tr>
                 {% endwith %}
             {% endfor %}

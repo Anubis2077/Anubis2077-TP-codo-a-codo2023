@@ -11,6 +11,7 @@ urlpatterns = [
     path('sell/', SellView.as_view(template_name='sell.html'), name='sell'),
     path('product_list/', UserProductsListview.as_view(template_name='userproductlist.html'), name='product_list'),
     
+    
 ]
 
 if settings.DEBUG:

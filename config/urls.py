@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls import include
 from django.conf.urls.static import static
 from .views import HomeView
+from core.marketplace.views import UpdateProductView#Prueba1View
 
 app_name='core.marketplace',
 'core.accounts'
@@ -17,7 +18,11 @@ urlpatterns = [
 
     path('marketplace/', include('core.marketplace.urls', namespace="marketplace")),
     path('users/', include('core.accounts.urls', namespace="users")),
-  
+
+
+    #marketplace
+    path('product/<slug>/update/', UpdateProductView.as_view(template_name='userproductedit.html'), name='product_edit'),
+    #path('product/update/', Prueba1View.as_view(template_name='product_edit.html'), name='product_edit'),
 
 ]
 

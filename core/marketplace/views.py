@@ -10,23 +10,14 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
-
+from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
+from django.views.generic import UpdateView
+from django.http import HttpResponse
 
 # Create your views here.
 
-from django.shortcuts import render, redirect
 
-class SellView(View):
-    template_name = 'sell.html'
-    product_list = 'pages/userproductlist.html'
-    success_url = reverse_lazy('core.marketplace:product_list')
-
-    def get(self, request, *args, **kwargs):
-        form = ProductModelForm()
-        context = {'form': form}
-
-        return render(request,'pages/sell.html', context)
 
 
 class SellView(View):
@@ -85,3 +76,19 @@ class UserProductsListview(View):
             'products': products
         }
         return render(request,'pages/userproductlist.html', context)
+    
+
+
+class UpdateProductView(LoginRequiredMixin, UpdateView):
+    template_name="pages/userproductedit.html"
+    form_class=ProductModelForm
+    success_url= reverse_lazy('core.marketplace:product_list')
+
+    def get_queryset(self):
+        return Product.objects.filter(user=self.request.user)  
+    
+#class Prueba1View(View):
+#    template_name = 'pages/userproductedit.html'
+#
+#    def get(self, request, *args, **kwargs):
+#        return render(request, 'pages/userproductedit.html')

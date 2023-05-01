@@ -3,6 +3,7 @@ from django.conf import settings
 import os
 from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+from django.views.generic import UpdateView
 
 
 
@@ -52,4 +53,3 @@ class PurchasedProduct(models.Model):
     
     def __str__(self):
         return self.email
-           
