@@ -6,7 +6,7 @@ from django.views.generic.edit import UpdateView
 from .models import Product
 from .forms import ProductModelForm
 from django.core.paginator import Paginator
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.views.generic import UpdateView
 from django.http import HttpResponse
+
 
 # Create your views here.
 
@@ -61,9 +62,6 @@ class SellView(View):
         return render(request, context)
 
     
-
-
-
 class UserProductsListview(View):
     template_name = 'pages/userproductlist.html'
 
@@ -87,6 +85,23 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         return Product.objects.filter(user=self.request.user)  
     
+
+class ProductDetailView(View):
+    template_name='pages/productdetail.html'
+    def get(self, request, slug, *args, **kwargs):
+        product= get_object_or_404(Product, slug=slug)
+        context={
+            'product': product
+        }
+
+        return render (request, 'pages/productdetail.html',context)
+
+
+
+
+
+
+
 #class Prueba1View(View):
 #    template_name = 'pages/userproductedit.html'
 #

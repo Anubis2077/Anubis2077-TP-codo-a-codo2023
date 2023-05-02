@@ -8,9 +8,11 @@
         <div class="card" style="border-radius: 15px;">
           <div class="bg-image hover-overlay ripple ripple-surface ripple-surface-light"
             data-mdb-ripple-color="light">
-            <img src="{{product.thumbnail.url}}"
+            <a href="{% url 'product_detail' slug=product.slug %}">
+              <img src="{{product.thumbnail.url}}"
               style="border-top-left-radius: 15px; border-top-right-radius: 15px; overflow:hidden;" class="img-fluid"
               alt="Laptop" />
+            </a>
             <a href="#!">
               <div class="mask"></div>
             </a>

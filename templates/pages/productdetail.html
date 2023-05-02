@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block navbar %}
+
+{% include 'components/navbar.html' %}
+
+{% endblock navbar %}
+
+
+{% block content %}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Detalles del producto</h1>
+      
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row">
+        <div class="col-xl-4">
+
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+              <img src="{{ product.thumbnail.url }}" alt="Profile" style="max-width: 200px;max-height: 150px;">
+              <h2>{{ product.name }}</h2>
+              <h3>${{ product.price }}</h3>
+              
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <p class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Ficha del Producto</p>
+                </li>
+
+
+              </ul>
+              <div class="tab-content pt-2">
+
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">Descripcion</h5>
+                  <p class="small fst-italic">{{ product.description }}</p>
+
+                  <h5 class="card-title">Detalles del producto</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Vendedor</div>
+                    <div class="col-lg-9 col-md-8">{{ user.username }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Nombre del producto:</div>
+                    <div class="col-lg-9 col-md-8">{{ product.name }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Online:</div>
+                    <div class="col-lg-9 col-md-8">{% if  product.content_url  %} Si {% else %} No {% endif %}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Archivos locales:</div>
+                    <div class="col-lg-9 col-md-8">{% if  product.content_file  %} Si {% else %} No {% endif %}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Precio:</div>
+                    <div class="col-lg-9 col-md-8">${{ product.price }}</div>
+                  </div>
+
+                  <button type="button" class="btn btn-primary">Comprar</button>
+                  <button type="button" class="btn btn-light">Agregar al changuito</button>
+
+                </div>
+
+                
+                </div>
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+
+{% endblock content %}
+
+
+{% block footer %}
+{% include 'components/footer.html' %}
+{% endblock footer %}
+
+
+
