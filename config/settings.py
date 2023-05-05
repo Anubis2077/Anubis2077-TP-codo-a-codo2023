@@ -24,12 +24,23 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     
     #APPS
     'core.marketplace',
     'core.accounts'
 ]
 
+#providers speccific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '514386897632-5lmrfbqmggcl9gjq2bkltr95mel04jg9.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        }
+    }
+}
 
 EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
 
