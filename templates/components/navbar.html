@@ -2,7 +2,7 @@
 <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="#" class="logo d-flex align-items-center">
+      <a href="{% url 'home' %}" class="logo d-flex align-items-center">
         <img src="{% static 'nice/assets/img/logo.png' %} " alt="">
         <span class="d-none d-lg-block">codeXmarket</span>
       </a>
@@ -164,7 +164,51 @@
 
           </ul><!-- End Messages Dropdown Items -->
 
-        </li><!-- End Messages Nav -->
+        </li>
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-cart"></i>
+            <span class="badge bg-success badge-number">3</span>
+          </a><!-- End Messages Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+            <li class="dropdown-header">
+              Agregaste {{ total_productos }} productos
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">Continuar compra</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            {% for item in cart.cart.values %}
+              <li class="message-item">
+                <a href="#">
+                  <img src="{{ item.image }}" style="width:80px;height:80px" alt="" >
+                  <div>
+                    <h4>{{item.name}}</h4>
+                    <p>{{item.description}}</p>
+                    <p> agregaste {{item.quantity}} unidades</p>
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            
+
+            <li class="dropdown-footer">
+              <a href="{% url 'changuito' %}">Ver todo el carrito</a>
+            </li>
+
+          </ul><!-- End Messages Dropdown Items -->
+
+        </li>
+
+        
+        <!-- End Messages Nav -->
         {% if user.is_authenticated %}
         <li class="nav-item dropdown pe-3">
 
@@ -193,9 +237,9 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{% url 'core.marketplace:product_list' %}">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'core.marketplace:sell' %}">
                 <i class="bi bi-gear"></i>
-                <span>Productos</span>
+                <span>Vender</span>
               </a>
             </li>
             <li>
@@ -203,9 +247,9 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'core.marketplace:product_list' %}">
                 <i class="bi bi-question-circle"></i>
-                <span>Need Help?</span>
+                <span>Mis productos</span>
               </a>
             </li>
             <li>

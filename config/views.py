@@ -3,6 +3,7 @@ from django.views import View
 from django.core.paginator import Paginator
 from core.marketplace.models import Product
 from core.marketplace.forms import ProductModelForm
+from core.changuito.cart import Cart
 
 
 class HomeView(View):
@@ -16,11 +17,16 @@ class HomeView(View):
             paginator = Paginator(products, 9)
             page_number = request.GET.get('page')
             digital_products_data = paginator.get_page(page_number)
-        
-        context={
-            'products':digital_products_data,
-            'form':form
+
+        cart = Cart(request)
+        total_productos = sum(item['quantity'] for item in cart.cart.values()) # Crear instancia del carrito
+        context = {
+            'products': digital_products_data,
+            'form': form,
+            'cart': cart,
+            'total_productos': total_productos, # Agregar el carrito al contexto manualmente
         }
+
         return render(request, 'pages/index.html', context)
 
     def post(self, request, *args, **kwargs):
@@ -46,9 +52,6 @@ class HomeView(View):
                 p.save()
                 return redirect('home')
 
-
-
-
         digital_products_data = None
 
         if products:
@@ -56,8 +59,11 @@ class HomeView(View):
             page_number = request.GET.get('page')
             digital_products_data = paginator.get_page(page_number)
         
+        cart = Cart(request) # Crear instancia del carrito
         context={
-            'products':digital_products_data
+            'products':digital_products_data,
+            'cart': cart, # Agregar el carrito al contexto manualmente
+            'form':form
         }
         return render(request, 'pages/index.html', context)
 

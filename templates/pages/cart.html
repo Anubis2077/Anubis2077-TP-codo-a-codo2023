@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<form action="{% url 'changuito' %}" method="POST">
+    {% csrf_token %}
+    <div class="card" style="padding-top:60px;">
+        <div class="card-body">
+          <h5 class="card-title">Default Table</h5>
+    
+          <!-- Default Table -->
+          <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" style="width:180px;">foto</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">descripcion</th>
+                    <th scope="col">cantidad</th>
+                    <th scope="col">precio</th>
+                    <th scope="col">subtotal</th> <!-- Agregar esta columna -->
+                    <th scope="col"></th> <!-- Agregar esta columna -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for item, subtotal in items_and_subtotals %}
+                <tr style="height: 180px;">
+                    <td><img  style="width:110px;height:80px;margin-top:35px;"src="{{ item.image }}" alt="{{ item.name }}"></td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.seller }}</td>
+                    <td><input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" max="100" data-price="{{ item.price }}"></td>
+                    <td>{{ item.price }}</td>
+                    <td class="subtotal">${{ subtotal }}</td> <!-- Mostrar el subtotal del producto -->
+                    <td><button type="button" class="remove-button" data-product-id="{{ item.product_id }}">Eliminar</button></td> <!-- Agregar este botón -->
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="6">Total</td>
+                    <td id="total">${{ total }}</td> <!-- Mostrar el total del carrito -->
+                </tr>
+            </tbody>
+        </table>
+        
+        <script>
+            var quantityInputs = document.querySelectorAll(".quantity-input");
+            var subtotals = document.querySelectorAll(".subtotal");
+            var totalElement = document.getElementById("total");
+            var removeButtons = document.querySelectorAll(".remove-button");
+        
+            for (var i = 0; i < quantityInputs.length; i++) {
+                quantityInputs[i].addEventListener("change", function() {
+                    // Obtener el nuevo valor del campo de entrada
+                    var newQuantity = this.value;
+                    
+                    if (newQuantity < 1 || newQuantity > 100) {
+                        
+                        return;
+                    }
+    
+                    var price = this.getAttribute("data-price");
+                    var newSubtotal = newQuantity * price;
+                    var subtotalElement = this.closest("tr").querySelector(".subtotal");
+                    subtotalElement.textContent = "$" + newSubtotal;
+                    var newTotal = 0;
+                    for (var j = 0; j < subtotals.length; j++) {
+                        newTotal += parseFloat(subtotals[j].textContent.replace("$", ""));
+                    }
+                    totalElement.textContent = "$" + newTotal;
+                });
+            }
+            for (var i = 0; i < removeButtons.length; i++) {
+                removeButtons[i].addEventListener("click", function() {
+                    // Obtener el ID del producto a eliminar
+                    var productId = this.getAttribute("data-product-id");
+                    var button = this;
+                    var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            
+                    // Enviar una solicitud AJAX al servidor para eliminar el producto del carrito
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/changuito/');
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            // Eliminar la fila de la tabla que corresponde al producto eliminado
+                            var row = button.parentNode.parentNode;
+                            row.parentNode.removeChild(row);
+                    
+                            // Actualizar el total del carrito
+                            var total = document.getElementById("total");
+                            total.innerHTML = "$" + xhr.responseText;
+                    
+                            // Recargar la página para actualizar la información del carrito
+                            location.reload();
+                        } else {
+                            console.log("Error al eliminar el producto del carrito");
+                        }
+                    };
+                    xhr.send('product_id=' + productId);
+                });
+            }
+        </script>
+            <div class="col-sm-10">
+              <button type="submit" class="btn btn-primary">continuar con la compra</button>
+            </div>
+          <!-- End Default Table Example -->
+        </div>
+      </div>
+    
+      
+    </div>
+</form>
+{% endblock content %}

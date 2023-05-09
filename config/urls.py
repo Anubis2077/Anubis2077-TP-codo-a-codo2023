@@ -6,9 +6,11 @@ from django.conf.urls import include
 from django.conf.urls.static import static
 from .views import HomeView
 from core.marketplace.views import UpdateProductView, ProductDetailView#Prueba1View
+from core.changuito.views import *
 
 app_name='core.marketplace',
-'core.accounts'
+'core.accounts',
+'core.changuito'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,8 +24,11 @@ urlpatterns = [
 
     #marketplace
     path('product/<slug>/update/', UpdateProductView.as_view(template_name='userproductedit.html'), name='product_edit'),
-    path('product/<slug>/', ProductDetailView.as_view(template_name='productdeatil.html'), name='product_detail')
+    path('product/<slug>/', ProductDetailView.as_view(template_name='productdeatil.html'), name='product_detail'),
 
+    #changuito
+    path('changuito/', CartView.as_view(template_name='cart.html'), name='changuito'),
+    path('add/', cart_add, name='add'),
 ]
 
 if settings.DEBUG:

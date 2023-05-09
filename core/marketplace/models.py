@@ -4,6 +4,7 @@ import os
 from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.views.generic import UpdateView
+from .choices import CATEGORY_CHOICES
 
 
 
@@ -32,8 +33,9 @@ class Product(models.Model):
     # content_file = models.FileField(blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
     content_file = models.FileField(blank=True, null=True)
     active = models.BooleanField(default=False)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='web_apps')
 
-    price = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0), MaxValueValidator(999999.99)])
+    price = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0), MaxValueValidator(9999999999.99)])
   
 
     def __str__(self):

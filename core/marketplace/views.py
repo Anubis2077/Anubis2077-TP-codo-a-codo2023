@@ -37,11 +37,7 @@ class SellView(View):
         form = ProductModelForm(request.POST, request.FILES)
         
         if form.is_valid():
-            # Procesar la imagen
-            #thumbnail = form.cleaned_data['thumbnail']
-            #fs = FileSystemStorage()
-            #filename = fs.save(thumbnail.name, thumbnail)
-            #thumbnail_url = fs.url(filename)
+            
 
             product = form.save(commit=False)
             product.user = request.user
