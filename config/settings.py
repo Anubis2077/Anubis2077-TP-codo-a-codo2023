@@ -20,17 +20,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-
+    
+    
+    
+    
+    #django allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     
+
+    #django comments
+    'django_comments',
+    
     #APPS
     'core.marketplace',
     'core.accounts',
     'core.changuito',
+    'core.comentarios',
 ]
+
+SITE_ID = 1
 
 #providers speccific settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -57,7 +68,7 @@ LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
 AUTH_USER_MODEL="accounts.User"
 
-SITE_ID = 1
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -82,6 +93,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
             ],
         },
     },
@@ -152,5 +164,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_COOKIE_SECURE = False
 
+
+#django comments settings
+SITE_ID = 1
 
 

@@ -18,8 +18,7 @@ def marketplace_directory_path(instance, filename):
             os.remove(full_path)
         return thumbnail
     else:
-        # Manejar el caso en que instance.name es None
-        # Por ejemplo, puedes generar un nombre aleatorio o utilizar un valor predeterminado
+       
         pass
 
 # Create your models here.

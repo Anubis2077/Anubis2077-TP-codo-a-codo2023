@@ -1,19 +1,18 @@
 from typing import Any
 from django.db import models
-from django.shortcuts import render
 from django.views import View
 from django.views.generic.edit import UpdateView
 from .models import Product
 from .forms import ProductModelForm
 from django.core.paginator import Paginator
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
-from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.views.generic import UpdateView
 from django.http import HttpResponse
+from django.utils import timezone
 
 
 # Create your views here.
@@ -83,23 +82,17 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
     
 
 class ProductDetailView(View):
-    template_name='pages/productdetail.html'
+    template_name = 'pages/productdetail.html'
+
     def get(self, request, slug, *args, **kwargs):
-        product= get_object_or_404(Product, slug=slug)
+        product = get_object_or_404(Product, slug=slug)
+        user = request.user
+
         context={
-            'product': product
+            'product': product,
+            'user': user,
         }
 
-        return render (request, 'pages/productdetail.html',context)
+        return render(request, 'pages/productdetail.html', context)
 
 
-
-
-
-
-
-#class Prueba1View(View):
-#    template_name = 'pages/userproductedit.html'
-#
-#    def get(self, request, *args, **kwargs):
-#        return render(request, 'pages/userproductedit.html')

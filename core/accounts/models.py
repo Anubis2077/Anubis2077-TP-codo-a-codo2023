@@ -3,6 +3,16 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from core.marketplace.models import Product, PurchasedProduct
 
+
+import requests
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
 # Create your models here.
 
 class User(AbstractUser):

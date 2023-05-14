@@ -1,0 +1,223 @@
+<form method="post">
+    {% csrf_token %}
+    <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
+        <div class="d-flex flex-start w-100">
+            {% if user.is_authenticated %}
+                <img class="rounded-circle shadow-1-strong me-3" src="{{ user_picture }}" alt="User_picture" width="40" height="40" />
+            {% else %}
+                <img class="rounded-circle shadow-1-strong me-3" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="User_picture" width="40" height="40" />
+            {% endif %}
+            <div class="form-outline w-100">
+                <textarea class="form-control" id="textAreaExample" rows="4" name="comment" placeholder="haga su pregunta"></textarea>
+                <label class="form-label" for="textAreaExample">Mensaje</label>
+            </div>
+        </div>
+        <div class="float-end mt-2 pt-1">
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-primary btn-sm">Post comment</button>
+            <button type="button" class="btn btn-outline-primary btn-sm">Cancel</button>
+        </div>
+    </div>
+</form>
+
+
+
+
+{% comment %} comments view {% endcomment %}
+
+class GuardarPreguntaOComentarioView(View):
+    def post(self, request, slug, pregunta, *args, **kwargs):
+        if pregunta == 'pregunta':
+            return self.pregunta(request, slug, *args, **kwargs)
+        elif pregunta == 'comentario':
+            return self.comentario(request, slug, *args, **kwargs)
+        else:
+            raise Http404
+
+    def pregunta(self, request, slug, *args, **kwargs):
+        form = ComentariosModelForm(request.POST)
+        if form.is_valid():
+            objeto = form.save(commit=False)
+            objeto.usuario = request.user
+            objeto.product = get_object_or_404(Product, slug=slug)
+            objeto.es_pregunta = True
+            objeto.save()
+        return redirect('product_detail', slug=slug)
+
+    def comentario(self, request, slug, *args, **kwargs):
+        form = ComentariosModelForm(request.POST)
+        if form.is_valid():
+            objeto = form.save(commit=False)
+            objeto.usuario = request.user
+            objeto.product = get_object_or_404(Product, slug=slug)
+            objeto.es_pregunta = False
+            objeto.save()
+        return redirect('product_detail', slug=slug)
+
+
+
+{% comment %} MODELS {% endcomment %}
+class Consultas(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultas_usuario')
+    pregunta = models.TextField()
+    respuesta = models.TextField(blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+    autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='consultas_autor')
+
+
+class Comentarios(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comentarios_usuario')
+    comentario = models.TextField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+{% comment %} forms {% endcomment %}
+
+from .models import *
+from django import forms
+
+
+from django import forms
+from .models import Comentarios, Consultas
+
+class ComentariosModelForm(forms.ModelForm):
+    class Meta:
+        model = Comentarios
+        fields = (
+            'usuario',
+            'comentario',
+            'product',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['comentario'].widget.attrs['class'] = 'form-control'
+        self.fields['comentario'].label = ''
+
+    def clean(self):
+        cleaned_data = super().clean()
+        comentario = cleaned_data.get("comentario")
+        if not comentario:
+            raise forms.ValidationError("Debe ingresar un comentario")
+        return cleaned_data
+
+class PreguntasModelForm(forms.ModelForm):
+    class Meta:
+        model = Consultas
+        fields = (
+            'pregunta',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pregunta'].widget.attrs['class'] = 'form-control'
+        self.fields['pregunta'].label = ''
+
+    def clean(self):
+        cleaned_data = super().clean()
+        pregunta = cleaned_data.get("pregunta")
+        if not pregunta:
+            raise forms.ValidationError("Debe ingresar una pregunta")
+        return cleaned_data
+
+class ConsultasModelForm(forms.ModelForm):
+    class Meta:
+        model = Consultas
+        fields = (
+            'autor',
+            'pregunta',
+            'product',
+        )
+
+    widgets = {
+        'autor': forms.HiddenInput(),
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pregunta'].widget.attrs['class'] = 'form-control'
+        self.fields['pregunta'].label = ''
+
+        self.fields['comentarios'] = ComentariosModelForm(prefix='comentarios')
+        self.fields['preguntas'] = PreguntasModelForm(prefix='preguntas')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        comentarios_form = self.fields['comentarios']
+        preguntas_form = self.fields['preguntas']
+        if not comentarios_form.is_valid() or not preguntas_form.is_valid():
+            raise forms.ValidationError("Hay errores en el formulario")
+        return cleaned_data
+
+    def save(self, commit=True):
+        comentarios_form = self.fields['comentarios']
+        preguntas_form = self.fields['preguntas']
+
+        comentarios = comentarios_form.save(commit=False)
+        preguntas = preguntas_form.save(commit=False)
+
+        consulta = super().save(commit=False)
+        consulta.autor = self.request.user
+        consulta.pregunta = preguntas['pregunta']
+        consulta.comentario = comentarios['comentario']
+
+        if commit:
+            comentarios.save()
+            preguntas.save()
+            consulta.save()
+
+        return consulta
+
+
+        comentarios y preguntas
+
+        <section style="background-color: #ad655f;">
+            <div class="container my-5 py-5">
+              <div class="row d-flex justify-content-center">
+                <div class="col-md-12 col-lg-10">
+                  <div class="card text-dark">
+                    <div class="card-body p-4">
+                      <h4 class="mb-0">Comentarios recientes</h4>
+                      <br>
+                      
+                      <section>
+                        {% for comentario in comentarios_list %}
+                          <div class="d-flex flex-start">
+                            <img class="rounded-circle shadow-1-strong me-3"
+                              src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(23).webp" alt="avatar" width="60"
+                              height="60" />
+                            <div>
+                              <h6 class="fw-bold mb-1">{{comentario.user_name}}</h6>
+                              <div class="d-flex align-items-center mb-3">
+                                <p class="mb-0">
+                                  {{ comentario.submit_date|date:"d-m-Y H:i:s" }}
+                                </p>
+                              </div>
+                              <p class="mb-0">
+                                {{comentario.comment}}
+                              </p>
+                            </div>
+                          </div>
+                        {% endfor %}
+          
+                      </section>
+                      
+                    </div>
+          
+                    <hr class="my-0" style="height: 1px;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+            {% comment %} preguntas {% endcomment %}
+          
+          
+            <h4 class="mb-0">Haz una pregunta</h4>
+          <br>
+          <form method="post">
+            {% csrf_token %}
+            {% render_comment_form for product %}
+          </form>
+          </section>

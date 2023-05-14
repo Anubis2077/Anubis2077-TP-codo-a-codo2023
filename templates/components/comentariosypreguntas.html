@@ -1,0 +1,39 @@
+{% load comments %}
+{% comment %} aqui van los comentarios {% endcomment %}
+{% get_comment_list for product as comment_list %}
+{% for comment in comment_list %}
+<p>{{comment.user}}</p>
+<p>{{comment.submit_date}}</p>
+<p> {{ comment.comment }} </p>
+<a href="#" class="reply-link" data-comment-id="{{ comment.id }}">Reply</a>
+{% get_comment_form for product as formulario %}
+<form id="reply-form-{{ comment.id }}" class="reply-form" style="display:none;" action="{% url 'comments-post-comment' %}" method="post">
+  {% csrf_token %}
+  {{ formulario.as_p }}
+  <button type="submit">Comentar</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function() {
+  $('.reply-link').click(function(event) {
+    event.preventDefault();
+    var comment_id = $(this).data('comment-id');
+    $('#reply-form-' + comment_id).toggle();
+  });
+});
+</script>
+{% endfor %}
+
+
+        {% get_comment_form for product as formulario %}
+        <h2>Dejar un comentario</h2>
+        <form method="post" action="{% url 'comments-post-comment' %}">
+          {% csrf_token %}
+          <input type="hidden" name="content_type" value="{{ content_type }}" />
+          <input type="hidden" name="object_pk" value="{{ object_pk }}" />
+          {{ formulario.as_p }}
+          <button type="submit">Comentar</button>
+      </form>
+    </div>
+

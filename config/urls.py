@@ -2,11 +2,16 @@
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
-from django.conf.urls import include
+from django.urls import include, re_path
 from django.conf.urls.static import static
 from .views import HomeView
-from core.marketplace.views import UpdateProductView, ProductDetailView#Prueba1View
+from core.marketplace.views import *#Prueba1View
 from core.changuito.views import *
+from core.comentarios.views import *
+from core.comentarios.forms import *
+from django_comments import urls as comments_urls
+from django_comments.views.comments import post_comment
+
 
 app_name='core.marketplace',
 'core.accounts',
@@ -29,6 +34,20 @@ urlpatterns = [
     #changuito
     path('changuito/', CartView.as_view(template_name='cart.html'), name='changuito'),
     path('add/', cart_add, name='add'),
+
+    #comentarios
+    path('comentar/<int:object_pk>/', post_comment, {'form_class': ComentarioFormulario}, name='comments-post-comment'),
+    path('product/<slug>/comments/', CommentView, name='product_comments'),
+    
+
+
+
+
+
+    #contrib-comments
+    re_path(r'^comments/', include('django_comments.urls')),
+    path('comments/', include(comments_urls)),
+
 ]
 
 if settings.DEBUG:
