@@ -32,7 +32,7 @@ class Product(models.Model):
     # content_file = models.FileField(blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['mp3'])])
     content_file = models.FileField(blank=True, null=True)
     active = models.BooleanField(default=False)
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='web_apps')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='web_apps',)
 
     price = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0), MaxValueValidator(9999999999.99)])
   
@@ -54,3 +54,18 @@ class PurchasedProduct(models.Model):
     
     def __str__(self):
         return self.email
+    
+
+class Buy(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    email= models.EmailField()
+    producto = models.ForeignKey(Product, on_delete=models.CASCADE,related_name='purchases')
+    cantidad = models.PositiveIntegerField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    precio = models.DecimalField(decimal_places=4, max_digits=100, null=True)
+    categoria = models.CharField(max_length=100,null=True)
+
+    #metodo_pago= models
+
+    def __str__(self):
+        return f"Compra {self.id} - {self.usuario.username} - {self.producto.nombre}"

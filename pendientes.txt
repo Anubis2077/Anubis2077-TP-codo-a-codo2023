@@ -1,0 +1,5 @@
+hacer que las conversaciones se actualcien apenas envias un mensaje
+configurar las conversaciones para que apenas compres un producto se cree un room donde puedan chatear estas dos personas
+crear sistema de notificaciones de mensajes y de comentarios
+crear pagina de perfil de usuario con datos 
+crear una vista de compra y configurar pago y validacion con mercadopago

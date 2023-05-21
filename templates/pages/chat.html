@@ -1,0 +1,160 @@
+{% extends 'base.html' %} 
+
+
+
+{% block content %}
+
+  <div class="container bootstrap snippets bootdeys" style="margin-top: 100px">
+    <div class="col-md-7 col-xs-12 col-md-offset-2">
+      <!-- Panel Chat -->
+      <div class="panel" id="chat">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <i class="icon wb-chat-text" aria-hidden="true"></i> {{ room.name }}
+          </h3>
+        </div>
+        <div class="panel-body">
+          <div class="chats">
+            {% for m in messages %}
+            <div class="chat">
+              <div class="chat-avatar">
+                <a
+                  class="avatar avatar-online"
+                  data-toggle="tooltip"
+                  href="#"
+                  data-placement="right"
+                  title=""
+                  data-original-title="June Lane"
+                >
+                  <img
+                    src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                    alt="..."
+                  />
+                  <i></i>
+                </a>
+              </div>
+            
+              <div class="chat-body">
+                <div class="chat-content" id="chat-messages">
+                  <p>
+                    {{ m.content }}
+                  </p>
+                  <time class="chat-time" datetime="2015-07-01T11:37">
+                    {{ m.user.username }}
+                  </time>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            
+            
+           
+              
+        <div class="panel-footer">
+          <form method="post" action="">
+            {% csrf_token %}
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Escribe tu mensaje"
+                id="chat-message-input"
+              />
+              <span class="input-group-btn">
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  id="chat-message-submit"
+                >
+                  Send
+                </button>
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- End Panel Chat -->
+    </div>
+  </div>
+{% endblock %} 
+
+{% block scripts %} 
+  {{ room.slug|json_script:"json-roomname" }}
+  {{ request.user.username|json_script:"json-username" }}
+
+  <script>
+    const roomName = JSON.parse(
+      document.getElementById("json-roomname").textContent
+    );
+    const userName = JSON.parse(
+      document.getElementById("json-username").textContent
+    );
+    const chatSocket = new WebSocket(
+      "ws://" + window.location.host + "/ws/" + roomName + "/"
+    );
+
+    chatSocket.onclose = function (e) {
+      console.log("onclose");
+    };
+
+    chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+    
+      if (data.message) {
+        const messageContent = "<b>" + data.username + "</b>: " + data.message + "<br>";
+        const chatMessages = document.querySelector("#chat-messages");
+        chatMessages.innerHTML += messageContent;
+      } else {
+        alert("The message was empty!");
+      }
+    
+      scrollToBottom();
+    };
+
+    document.querySelector("#chat-message-input").focus();
+    document.querySelector("#chat-message-input").onkeyup = function (e) {
+      if (e.keyCode === 13) {
+        document.querySelector("#chat-message-submit").click();
+      }
+    };
+
+    document.querySelector("#chat-message-submit").onclick = function (e) {
+      e.preventDefault();
+
+      const messageInputDom = document.querySelector("#chat-message-input");
+      const message = messageInputDom.value;
+
+      console.log({
+        message: message,
+        username: userName,
+        room: roomName,
+      });
+
+      chatSocket.send(
+        JSON.stringify({
+          message: message,
+          username: userName,
+          room: roomName,
+        })
+      );
+
+      messageInputDom.value = "";
+
+      location.reload(); // Actualiza la página después de enviar el mensaje
+
+      return false;
+    };
+
+    /**
+    * A function for finding the messages element, and scroll to the bottom of it.
+    */
+    function scrollToBottom() {
+      let objDiv = document.getElementById("chat-messages");
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+    // Add this below the function to trigger the scroll on load.
+    scrollToBottom();
+  </script>
+
+{% endblock %}

@@ -3,7 +3,7 @@ from django.db import models
 from django.views import View
 from django.views.generic.edit import UpdateView
 from .models import Product
-from .forms import ProductModelForm
+from .forms import *
 from django.core.paginator import Paginator
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse, reverse_lazy
@@ -13,12 +13,10 @@ from django.core.exceptions import ValidationError
 from django.views.generic import UpdateView
 from django.http import HttpResponse
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-
-
-
 
 class SellView(View):
     template_name = 'sell.html'
@@ -70,8 +68,6 @@ class UserProductsListview(View):
         }
         return render(request,'pages/userproductlist.html', context)
     
-
-
 class UpdateProductView(LoginRequiredMixin, UpdateView):
     template_name="pages/userproductedit.html"
     form_class=ProductModelForm
@@ -95,4 +91,46 @@ class ProductDetailView(View):
 
         return render(request, 'pages/productdetail.html', context)
 
+
+#def comprar_producto(request, slug):
+#    # Obtener el producto a comprar
+#    producto = get_object_or_404(Product, slug=slug)
+#    
+#    return render(request, 'pages/compra_exitosa.html', {'product': producto})
+
+
+
+
+@login_required
+def formulario_compra(request, slug):
+    producto = get_object_or_404(Product, slug=slug)
+
+    if request.method == 'POST':
+        form = BuyModelForm(request.POST)
+        print(form.errors)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            compra = Buy(
+                usuario=request.user,
+                producto=producto,
+                cantidad=1,
+                email=email,
+                precio=producto.price,
+                categoria= producto.category       
+            )
+
+            
+            compra.save()
+            print("categoria:" + str(compra.categoria))
+            print("precio:" + str(compra.precio))
+            print("la compra se realizo exitosamente")
+
+            
+            return render(request, 'pages/compra_exitosa.html')
+    else:
+        form = BuyModelForm()
+        print("la compra no se realizo ")
+
+    
+    return render(request, 'pages/formulario_compra.html', {'product': producto, 'form': form})
 

@@ -1,5 +1,6 @@
 from django import forms
-from .models import Product
+from .models import *
+from core.accounts.models import User
 
 
 
@@ -20,3 +21,12 @@ class ProductModelForm(forms.ModelForm):
             'category',
         )
        
+
+class BuyModelForm(forms.ModelForm):
+    email=forms.EmailField()
+
+    class Meta:
+        model = Buy
+        fields = (
+            'email',
+        )
