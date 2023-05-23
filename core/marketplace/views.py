@@ -105,6 +105,10 @@ class ProductDetailView(View):
 def formulario_compra(request, slug):
     producto = get_object_or_404(Product, slug=slug)
 
+    if producto.user == request.user:
+        # El usuario está intentando comprar su propio producto, tomar acción apropiada (por ejemplo, redirigir a una página de error)
+        return render(request, 'pages/error.html', {'message': 'No puedes comprar tu propio producto, chimbewencha!!!'})
+
     if request.method == 'POST':
         form = BuyModelForm(request.POST)
         print(form.errors)
@@ -126,11 +130,17 @@ def formulario_compra(request, slug):
             print("la compra se realizo exitosamente")
 
             
-            return render(request, 'pages/compra_exitosa.html')
+            return render(request, 'pages/user_profile.html')
     else:
         form = BuyModelForm()
         print("la compra no se realizo ")
 
     
     return render(request, 'pages/formulario_compra.html', {'product': producto, 'form': form})
+
+
+def error_view(request):
+    
+    return render(request, 'pages/error.html')
+
 

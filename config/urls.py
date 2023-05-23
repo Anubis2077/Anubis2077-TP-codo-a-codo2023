@@ -12,6 +12,7 @@ from core.comentarios.forms import *
 from django_comments import urls as comments_urls
 from django_comments.views.comments import post_comment
 from core.chat import views
+from core.accounts.views import CustomPasswordChangeView
 
 
 
@@ -33,7 +34,7 @@ urlpatterns = [
     path('product/<slug>/update/', UpdateProductView.as_view(template_name='userproductedit.html'), name='product_edit'),
     path('product/<slug>/', ProductDetailView.as_view(template_name='productdeatil.html'), name='product_detail'),
     path('product/<slug>/buying/', formulario_compra, name='formulario_compra'),
-    #path('product/<slug>/buyed/', comprar_producto, name='compra_exitosa'),
+    path('error/', error_view, name='error'),
 
     #changuito
     path('changuito/', CartView.as_view(template_name='cart.html'), name='changuito'),
@@ -47,6 +48,8 @@ urlpatterns = [
     path('chat/rooms', views.rooms, name='rooms'),
     path('chat/<slug:slug>/', views.room, name='room'),
     
+    #accounts
+    path('user_profile/', CustomPasswordChangeView.as_view(template_name='user_profile.html'), name='user_profile'), 
     
     #contrib-comments
     re_path(r'^comments/', include('django_comments.urls')),

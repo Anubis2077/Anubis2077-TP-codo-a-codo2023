@@ -79,24 +79,22 @@
                     <div class="col-lg-9 col-md-8">${{ product.price }}</div>
                   </div>
 
-                  
-                  <a href="{% url 'formulario_compra' product.slug %}" class="btn btn-primary">Comprar</a>
+                  {% if product.user == request.user %}
+                    
+                  {% else %}
+                    <a href="{% url 'formulario_compra' product.slug %}" class="btn btn-primary" >Comprar</a>
 
+                    <form id="add-to-cart-form" action="{% url 'add' %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="product_id" value="{{ product.id }}">
+                      <button id="add-to-cart-btn" type="submit" class="btn btn-light"  >Agregar al changuito</button>
 
-
-
-
-                  <form id="add-to-cart-form" action="{% url 'add' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="product_id" value="{{ product.id }}">
-                    <button id="add-to-cart-btn" type="submit" class="btn btn-light">Agregar al changuito</button>
-
-                  </form>
+                    </form>
+                  {% endif %}
                   <script>
                     document.getElementById('add-to-cart-btn').addEventListener('click', function(event) {
                       event.stopPropagation();
                     });
-                  
                   </script>
                   
 
