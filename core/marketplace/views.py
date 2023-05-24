@@ -11,10 +11,11 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
 from django.views.generic import UpdateView
-from django.http import HttpResponse
+from django.http import HttpResponse,  HttpResponseRedirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
+import uuid
+from core.chat.models import Room
 
 # Create your views here.
 
@@ -115,7 +116,8 @@ def formulario_compra(request, slug):
         if form.is_valid():
             email = form.cleaned_data['email']
             compra = Buy(
-                usuario=request.user,
+                comprador=request.user,
+                vendedor=producto.user,
                 producto=producto,
                 cantidad=1,
                 email=email,
@@ -123,14 +125,17 @@ def formulario_compra(request, slug):
                 categoria= producto.category       
             )
 
-            
             compra.save()
-            print("categoria:" + str(compra.categoria))
-            print("precio:" + str(compra.precio))
-            print("la compra se realizo exitosamente")
+            slug = str(uuid.uuid4())
 
+            room = Room(slug=slug)
+            room.save()
+            mensaje = f'Has comprado {producto.name}. Envía un mensaje al vendedor.'
+            room_url = reverse('room', kwargs={'slug': slug})
+            room_url_with_params = f'{room_url}?mensaje={mensaje}'
+
+        return HttpResponseRedirect(room_url_with_params)
             
-            return render(request, 'pages/user_profile.html')
     else:
         form = BuyModelForm()
         print("la compra no se realizo ")

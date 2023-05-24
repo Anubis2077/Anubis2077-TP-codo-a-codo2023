@@ -1,7 +1,12 @@
 {% load comments %}
 {% comment %} aqui van los comentarios {% endcomment %}
 {% if product.user == request.user %}
-
+  {% get_comment_list for product as comment_list %}
+  {% for comment in comment_list %}
+      <p>{{comment.user}}</p>
+      <p>{{comment.submit_date}}</p>
+      <p> {{ comment.comment }} </p>
+  {% endfor %}
 {% else %}
   {% get_comment_list for product as comment_list %}
   {% for comment in comment_list %}

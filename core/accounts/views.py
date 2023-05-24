@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from core.marketplace.models import Product
+from .models import User
 
 class CustomPasswordChangeView(PasswordChangeView):
     form_class = ChangePasswordForm
@@ -21,9 +22,21 @@ class CustomPasswordChangeView(PasswordChangeView):
         context['products'] = products
 
         #productos comprados por el usuario
-         
-        products_purchased = Product.objects.filter(purchases__usuario=self.request.user)
+        products_purchased = Product.objects.filter(purchases__comprador=self.request.user)
         context['products_purchased'] = products_purchased
+
+        #productos vendidos por el usuario
+        products_sold = Product.objects.filter(purchases__vendedor=self.request.user)
+
+        product_counts = {}
+
+        for product in products_sold:
+            if product.name in product_counts:
+                product_counts[product.name] += 1
+            else:
+                product_counts[product.name] = 1
+
+        context['product_counts'] = product_counts
 
 
         return context

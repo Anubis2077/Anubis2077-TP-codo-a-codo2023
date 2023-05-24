@@ -13,5 +13,6 @@ def rooms(request):
 def room(request, slug):
     room = Room.objects.get(slug=slug)
     messages = Message.objects.filter(room=room)[0:25]
+    mensaje = request.GET.get('mensaje', None)
 
-    return render(request, 'pages/chat.html', {'room': room, 'messages': messages})
+    return render(request, 'pages/chat.html', {'room': room, 'messages': messages, 'mensaje': mensaje},)

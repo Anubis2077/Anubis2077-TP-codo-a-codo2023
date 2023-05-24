@@ -57,8 +57,8 @@ class PurchasedProduct(models.Model):
     
 
 class Buy(models.Model):
-    comprador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='compras')
-    vendedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ventas')
+    comprador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='compras',null=True)
+    vendedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ventas', null=True)
     email= models.EmailField()
     producto = models.ForeignKey(Product, on_delete=models.CASCADE,related_name='purchases')
     cantidad = models.PositiveIntegerField()
